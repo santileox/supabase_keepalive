@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # ==================== BOT 1 (current bot - no numbers) ====================
+      # ==================== BOT 1 ====================
       - name: Ping Bot 1 - Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -36,8 +36,10 @@ jobs:
             exit 0
           fi
           echo "Pinging Bot 1 webhook..."
-          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
-          echo "Bot 1 webhook ping successful"
+          curl -sS --retry 4 --retry-delay 8 --max-time 40 \
+            -X GET "$BOT_URL" \
+            -H "User-Agent: GitHub-KeepAlive" || true
+          echo "Bot 1 webhook ping finished"
 
       # ==================== BOT 2 ====================
       - name: Ping Bot 2 - Supabase
@@ -65,8 +67,10 @@ jobs:
             exit 0
           fi
           echo "Pinging Bot 2 webhook..."
-          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
-          echo "Bot 2 webhook ping successful"
+          curl -sS --retry 4 --retry-delay 8 --max-time 40 \
+            -X GET "$BOT_URL" \
+            -H "User-Agent: GitHub-KeepAlive" || true
+          echo "Bot 2 webhook ping finished"
 
       # ==================== BOT 3 ====================
       - name: Ping Bot 3 - Supabase
@@ -94,5 +98,7 @@ jobs:
             exit 0
           fi
           echo "Pinging Bot 3 webhook..."
-          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
-          echo "Bot 3 webhook ping successful"
+          curl -sS --retry 4 --retry-delay 8 --max-time 40 \
+            -X GET "$BOT_URL" \
+            -H "User-Agent: GitHub-KeepAlive" || true
+          echo "Bot 3 webhook ping finished"
