@@ -1,39 +1,98 @@
-name: Keep Supabase + Bot Alive
+name: Keep Multiple Bots + Supabase Alive
 
 on:
   schedule:
-    - cron: '*/12 * * * *'   # every 12 minutes
+    - cron: '*/12 * * * *'
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      # 1. Keep Supabase awake
-      - name: Ping Supabase database
+
+      # ==================== BOT 1 (current bot - no numbers) ====================
+      - name: Ping Bot 1 - Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          echo "Pinging Supabase..."
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "Bot 1 Supabase secrets missing – skipping"
+            exit 0
+          fi
+          echo "Pinging Bot 1 Supabase..."
           curl -fsS --retry 3 --retry-delay 5 \
             "${SUPABASE_URL}/rest/v1/keep_alive?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
-          echo "Supabase ping successful"
+          echo "Bot 1 Supabase ping successful"
 
-      # 2. Keep the Telegram bot awake (prevents cold starts)
-      - name: Ping Telegram bot
+      - name: Ping Bot 1 - Webhook
         env:
           BOT_URL: ${{ secrets.BOT_URL }}
         run: |
           if [ -z "$BOT_URL" ]; then
-            echo "BOT_URL secret is missing – skipping bot ping"
+            echo "BOT_URL missing – skipping"
             exit 0
           fi
-          echo "Pinging bot..."
+          echo "Pinging Bot 1 webhook..."
+          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
+          echo "Bot 1 webhook ping successful"
+
+      # ==================== BOT 2 ====================
+      - name: Ping Bot 2 - Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL_2 }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_2 }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "Bot 2 Supabase secrets missing – skipping"
+            exit 0
+          fi
+          echo "Pinging Bot 2 Supabase..."
           curl -fsS --retry 3 --retry-delay 5 \
-            -X GET "$BOT_URL" \
-            -H "User-Agent: GitHub-KeepAlive" \
-            --max-time 15
-          echo "Bot ping successful"
+            "${SUPABASE_URL}/rest/v1/keep_alive?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+          echo "Bot 2 Supabase ping successful"
+
+      - name: Ping Bot 2 - Webhook
+        env:
+          BOT_URL: ${{ secrets.BOT_URL_2 }}
+        run: |
+          if [ -z "$BOT_URL" ]; then
+            echo "BOT_URL_2 missing – skipping"
+            exit 0
+          fi
+          echo "Pinging Bot 2 webhook..."
+          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
+          echo "Bot 2 webhook ping successful"
+
+      # ==================== BOT 3 ====================
+      - name: Ping Bot 3 - Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL_3 }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_3 }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then
+            echo "Bot 3 Supabase secrets missing – skipping"
+            exit 0
+          fi
+          echo "Pinging Bot 3 Supabase..."
+          curl -fsS --retry 3 --retry-delay 5 \
+            "${SUPABASE_URL}/rest/v1/keep_alive?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}"
+          echo "Bot 3 Supabase ping successful"
+
+      - name: Ping Bot 3 - Webhook
+        env:
+          BOT_URL: ${{ secrets.BOT_URL_3 }}
+        run: |
+          if [ -z "$BOT_URL" ]; then
+            echo "BOT_URL_3 missing – skipping"
+            exit 0
+          fi
+          echo "Pinging Bot 3 webhook..."
+          curl -fsS --retry 3 --retry-delay 5 -X GET "$BOT_URL" --max-time 15
+          echo "Bot 3 webhook ping successful"
